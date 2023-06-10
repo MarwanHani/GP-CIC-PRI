@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:gp_cic/trips.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -16,8 +17,9 @@ import 'package:gp_cic/Constants.dart';
 class Provider_trip extends StatefulWidget {
   final String token ;
   final String imagePath;
+  final String type;
 
-  const Provider_trip({Key? key, required this.token,required this.imagePath}) : super(key: key);
+  const Provider_trip({Key? key, required this.token,required this.imagePath , required this.type}) : super(key: key);
   @override
   _Provider_tripState createState() => _Provider_tripState();
 }
@@ -162,7 +164,7 @@ class _Provider_tripState extends State<Provider_trip> {
                       width: 1,
                     ),
                   ),
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(20),
                   child: DropdownButton<String>(
                     value: selectedValue ,
                     items: placeNames.map((String item) {
@@ -255,7 +257,6 @@ class _Provider_tripState extends State<Provider_trip> {
                   ),
                   onTap: ((startLoading, stopLoading, btnState) async {
                     if (btnState == ButtonState.idle) {
-                      startLoading();
 
                       String? name = selectedValue;
                       String tripName = tripNameController.text;
@@ -265,8 +266,13 @@ class _Provider_tripState extends State<Provider_trip> {
                       final String formatted = formatter.format(selectedDate);
                       String formattedTime = DateFormat('HH:mm').format(selectedDate);
                       //  add();
-                     await makeRequest(widget.token, tripName,image!.path, description, price, loactions, formatted, formattedTime,name!);
-                      stopLoading();
+                      if (image != null) {
+                        startLoading();
+                        await makeRequest(widget.token, tripName,image!.path, description, price, loactions, formatted, formattedTime,name!);
+                        stopLoading();
+                      } else {
+                        showSnackBarerror("Please select a photo");
+                      }
                     }
                   }),
                   child: const Text("Add Trip"),
@@ -299,10 +305,13 @@ class _Provider_tripState extends State<Provider_trip> {
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
-
+    print(response.statusCode);
     if (response.statusCode == 200) {
      showSnackBar("Trip add successfully");
-     Navigator.pop(context);
+     Navigator.push(
+       context,
+       MaterialPageRoute(builder: (context) => Trips(type: widget.type, token: widget.token, maxPrice: "", minPrice: "", placeName: "")),
+     );
     }
     else {
       showSnackBar("Error in adding trip");

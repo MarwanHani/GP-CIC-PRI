@@ -51,7 +51,7 @@ class _TripsState extends State<Trips> {
           IconButton(onPressed: (){
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Provider_trip(token : widget.token,imagePath: "",)),
+              MaterialPageRoute(builder: (context) => Provider_trip(token : widget.token,imagePath: "",type: widget.type,)),
             );
           }, icon: const Icon(Icons.add,color: Colors.black,)),
 

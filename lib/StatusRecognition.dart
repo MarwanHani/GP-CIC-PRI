@@ -160,7 +160,7 @@ class _StatusRecognitionState extends State<StatuseRecognition> {
                         image != null ? Image.file(image!): const Text("No image selected"),
                         const SizedBox(height: 20,),
                         Text(
-                           "${results![0]['label']} - ${results![0]['confidence'].toStringAsFixed(2)}",
+                           "${results![0]['label']}",
                           style: const TextStyle(color: Colors.red,
                               fontSize: 20),
                         ) ,
